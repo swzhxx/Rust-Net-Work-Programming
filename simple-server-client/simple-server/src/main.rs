@@ -3,7 +3,7 @@ use std::net::{TcpListener, TcpStream};
 
 fn handle_client(mut stream: TcpStream) -> io::Result<()> {
     let mut buf = [0; 512];
-    for _ in 0..1000 {
+    loop {
         let bytes_read = stream.read(&mut buf)?;
         println!(" bytes_read {}", bytes_read);
         if bytes_read == 0 {
