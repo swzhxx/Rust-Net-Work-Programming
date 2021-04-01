@@ -1,3 +1,4 @@
+use std::convert::TryInto;
 use std::io::{self, BufRead, BufReader, Result};
 use std::net::{SocketAddr, TcpListener, TcpStream};
 use std::str;
@@ -7,17 +8,11 @@ use std::{boxed::Box, io::Read};
 use std::{collections::HashMap, mem};
 type Store = HashMap<Box<String>, Mutex<String>>;
 
-enum Operater {
-    set,
-    get,
-    delete,
-}
-
+#[derive(Debug)]
 #[repr(packed)]
 struct Message {
-    op: Operater,
-    key: String,
-    value: String,
+    key: u32,
+    value: u32,
 }
 struct Memcached {
     store: Store,
@@ -44,11 +39,16 @@ impl Memcached {
 
 fn handle_read(mut stream: TcpStream, memcahced: Arc<Memcached>) {
     // let len = std::mem::size_of(Message);
+    let mut message: Message;
+    const len: usize = std::mem::size_of::<Message>();
     loop {
         // let mut reader = BufReader::new(stream.try_clone().unwrap());
-        let mut buf = [0u8; 2];
+        let mut buf = [0u8; 8192];
         let bytes_read = stream.read(&mut buf).unwrap();
-        println!("{}", str::from_utf8(&buf[..bytes_read]).unwrap());
+        println!("接受:{:?}", &buf[..bytes_read]);
+        let raw_data: &[u8; len] = &buf[..len].try_into().expect("");
+        message = unsafe { std::mem::transmute_copy::<[u8; len], Message>(raw_data) };
+        println!("{:?}", message);
     }
 }
 
