@@ -18,7 +18,7 @@ struct SharedState {
 
 impl Future for TimerFuture {
     type Output = ();
-    fn poll(self: Pin<&mut self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         let mut shared_state = self.shared_state.lock().unwrap();
         if shared_state.completed {
             Poll::Ready(())
@@ -32,7 +32,7 @@ impl Future for TimerFuture {
 impl TimerFuture {
     pub fn new(duration: Duration) -> Self {
         let shared_state = Arc::new(Mutex::new(SharedState {
-            complete: false,
+            completed: false,
             waker: None,
         }));
         let thread_shared_state = shared_state.clone();
