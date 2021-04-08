@@ -1,0 +1,13 @@
+[package]
+authors = ["swzhxx <549909896@qq.com>"]
+edition = "2018"
+name = "async-web-server"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+futures = "0.3"
+[dependencies.async-std]
+features = ["attributes"]
+version = "1.6"
